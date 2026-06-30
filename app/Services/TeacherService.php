@@ -37,7 +37,7 @@ class TeacherService
             $teacher = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make('Test@123'),
+                'password' => Hash::make(config('site.default_password')),
             ]);
 
             $teacher->assignRole(Role::TEACHER->value);

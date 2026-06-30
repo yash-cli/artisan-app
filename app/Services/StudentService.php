@@ -49,7 +49,7 @@ class StudentService
             $student = User::query()->create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make('Test@123'),
+                'password' => Hash::make(config('site.default_password')),
             ]);
             $student->assignRole(Role::STUDENT->value);
 
@@ -57,7 +57,7 @@ class StudentService
                 $parent = User::query()->create([
                     'name' => $data['parent_name'],
                     'email' => $data['parent_email'],
-                    'password' => Hash::make('Test@123'),
+                    'password' => Hash::make(config('site.default_password')),
                     'student_id' => $student->id,
                 ]);
                 $parent->assignRole(Role::PARENT->value);
@@ -84,7 +84,7 @@ class StudentService
                     $parent = User::query()->create([
                         'name' => $data['parent_name'],
                         'email' => $data['parent_email'],
-                        'password' => Hash::make('Test@123'),
+                        'password' => Hash::make(config('site.default_password')),
                         'student_id' => $student->id,
                     ]);
                     $parent->assignRole(Role::PARENT->value);
