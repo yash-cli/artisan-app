@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Enums\AnnouncementType;
 use App\Enums\Role;
+use App\Mail\AnnouncementCreatedMail;
 use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class AnnouncementManageService
 {
@@ -31,12 +33,33 @@ class AnnouncementManageService
             $type = $this->getAnnouncementType($data['targets'] ?? []);
         }
 
-        return Announcement::create([
+        $announcement = Announcement::create([
             'user_id' => $user->id,
             'title' => $data['title'],
             'description' => $data['description'],
             'type' => $type,
         ]);
+
+        if ($user->hasRole(Role::TEACHER->value)) {
+            $targetRoles = [];
+            if ($type === AnnouncementType::STUDENT) {
+                $targetRoles[] = Role::STUDENT->value;
+            } elseif ($type === AnnouncementType::PARENTS) {
+                $targetRoles[] = Role::PARENT->value;
+            } elseif ($type === AnnouncementType::STUDENT_AND_PARENTS) {
+                $targetRoles[] = Role::STUDENT->value;
+                $targetRoles[] = Role::PARENT->value;
+            }
+
+            if (!empty($targetRoles)) {
+                $emails = User::role($targetRoles)->pluck('email');
+                if ($emails->isNotEmpty()) {
+                    Mail::bcc($emails)->queue(new AnnouncementCreatedMail($announcement));
+                }
+            }
+        }
+
+        return $announcement;
     }
 
     public function update(Announcement $announcement, array $data, User $user): bool

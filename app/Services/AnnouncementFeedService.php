@@ -25,11 +25,13 @@ class AnnouncementFeedService
         }
 
         return Announcement::query()->with('user')
-            ->when(filled($types), fn($q) => $q->whereIn('type', $types))
-            ->when($user->hasRole(Role::ADMIN->value) || $user->hasRole(Role::TEACHER->value), function ($q) {
-                $q->whereHas('user', function ($q) {
-                    $q->role(Role::ADMIN->value);
-                });
+            ->when(!$user->hasRole(Role::ADMIN->value), function ($q) use ($user, $types) {
+                $q->when(filled($types), fn($q) => $q->whereIn('type', $types))
+                  ->when($user->hasRole(Role::TEACHER->value), function ($q) {
+                      $q->whereHas('user', function ($q) {
+                          $q->role(Role::ADMIN->value);
+                      });
+                  });
             })
             ->latest()
             ->get();
