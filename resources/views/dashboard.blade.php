@@ -15,14 +15,22 @@
                     @role('admin')
                         <div class="mb-4">
                             <a href="{{ route('teachers.index') }}" class="btn btn-primary">Manage Teachers</a>
+                            <a href="{{ route('admin.announcements.index') }}" class="btn btn-outline-primary ms-2">Manage Announcements</a>
                         </div>
                     @endrole
 
                     @hasanyrole('teacher|admin')
                         <div class="mb-4">
                             <a href="{{ route('students.index') }}" class="btn btn-success">Manage Students</a>
+                            @role('teacher')
+                                <a href="{{ route('teacher.announcements.index') }}" class="btn btn-outline-success ms-2">Manage Announcements</a>
+                            @endrole
                         </div>
                     @endhasanyrole
+
+                    <div class="mb-4">
+                        <a href="{{ route('announcements.index') }}" class="btn btn-info text-white">View Announcements</a>
+                    </div>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

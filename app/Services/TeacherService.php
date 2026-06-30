@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Enums\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +13,7 @@ class TeacherService
 {
     public function getDataTable(): JsonResponse
     {
-        $teachers = User::role('teacher')->select(['id', 'name', 'email']);
+        $teachers = User::role(Role::TEACHER->value);
 
         return DataTables::of($teachers)
             ->addIndexColumn()
@@ -39,7 +40,7 @@ class TeacherService
                 'password' => Hash::make('Test@123'),
             ]);
 
-            $teacher->assignRole('teacher');
+            $teacher->assignRole(Role::TEACHER->value);
             return $teacher;
         });
 

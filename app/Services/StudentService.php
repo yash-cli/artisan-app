@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Enums\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +13,7 @@ class StudentService
 {
     public function getDataTable(): JsonResponse
     {
-        $students = User::query()->role('student')->with('parent')->select(['id', 'name', 'email']);
+        $students = User::query()->role(Role::STUDENT->value)->with('parent');
 
         return DataTables::of($students)
             ->addIndexColumn()
@@ -27,7 +28,7 @@ class StudentService
                 $deleteUrl = route('students.destroy', $row->id);
 
                 $btn = '';
-                if (auth()->user()->hasRole('teacher')) {
+                if (auth()->user()->hasRole(Role::TEACHER->value)) {
                     $btn .= '<a href="' . $editUrl . '" class="btn btn-sm btn-primary mr-1">Edit</a>';
                     $btn .= '<form action="' . $deleteUrl . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this student?\');">
                         ' . csrf_field() . method_field('DELETE') . '
@@ -50,7 +51,7 @@ class StudentService
                 'email' => $data['email'],
                 'password' => Hash::make('Test@123'),
             ]);
-            $student->assignRole('student');
+            $student->assignRole(Role::STUDENT->value);
 
             if (!empty($data['has_parent'])) {
                 $parent = User::query()->create([
@@ -59,7 +60,7 @@ class StudentService
                     'password' => Hash::make('Test@123'),
                     'student_id' => $student->id,
                 ]);
-                $parent->assignRole('parent');
+                $parent->assignRole(Role::PARENT->value);
             }
 
             return $student;
@@ -86,7 +87,7 @@ class StudentService
                         'password' => Hash::make('Test@123'),
                         'student_id' => $student->id,
                     ]);
-                    $parent->assignRole('parent');
+                    $parent->assignRole(Role::PARENT->value);
                 }
             } else {
                 if ($student->parent) {

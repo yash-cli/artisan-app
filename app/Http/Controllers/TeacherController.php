@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpsertRequest;
 use App\Models\User;
+use App\Enums\Role;
 use App\Services\TeacherService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -38,7 +39,7 @@ class TeacherController extends Controller
 
     public function edit(User $teacher): View
     {
-        if (!$teacher->hasRole('teacher')) {
+        if (!$teacher->hasRole(Role::TEACHER->value)) {
             abort(404);
         }
 
@@ -47,7 +48,7 @@ class TeacherController extends Controller
 
     public function update(UpsertRequest $request, User $teacher): RedirectResponse
     {
-        if (!$teacher->hasRole('teacher')) {
+        if (!$teacher->hasRole(Role::TEACHER->value)) {
             abort(404);
         }
 
@@ -58,7 +59,7 @@ class TeacherController extends Controller
 
     public function destroy(User $teacher): RedirectResponse
     {
-        if (!$teacher->hasRole('teacher')) {
+        if (!$teacher->hasRole(Role::TEACHER->value)) {
             abort(404);
         }
 

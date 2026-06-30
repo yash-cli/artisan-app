@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Enums\Role as RoleEnum;
 
 class RoleSeeder extends Seeder
 {
@@ -17,12 +18,12 @@ class RoleSeeder extends Seeder
         Role::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $roleArr = array_map(fn(string $role) => [
-            'name' => $role,
+        $roleArr = array_map(fn($role) => [
+            'name' => $role->value,
             'guard_name' => 'web',
             'created_at' => now(),
             'updated_at' => now(),
-        ], ['admin', 'teacher', 'student', 'parent']);
+        ], RoleEnum::cases());
 
         Role::insert($roleArr);
     }
