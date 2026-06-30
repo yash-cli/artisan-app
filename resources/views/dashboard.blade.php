@@ -18,6 +18,12 @@
                         </div>
                     @endrole
 
+                    @hasanyrole('teacher|admin')
+                        <div class="mb-4">
+                            <a href="{{ route('students.index') }}" class="btn btn-success">Manage Students</a>
+                        </div>
+                    @endhasanyrole
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger">Logout</button>

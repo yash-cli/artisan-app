@@ -12,12 +12,8 @@ use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-    protected TeacherService $teacherService;
 
-    public function __construct(TeacherService $teacherService)
-    {
-        $this->teacherService = $teacherService;
-    }
+    public function __construct(private readonly TeacherService $teacherService) {}
 
     public function index(Request $request): View|JsonResponse
     {

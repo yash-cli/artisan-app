@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -22,5 +23,13 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:admin')->group(function () {
         Route::resource('teachers', TeacherController::class);
+    });
+
+    Route::middleware('role:teacher|admin')->group(function () {
+        Route::get('students', [StudentController::class, 'index'])->name('students.index');
+    });
+
+    Route::middleware('role:teacher')->group(function () {
+        Route::resource('students', StudentController::class)->except('index');
     });
 });
