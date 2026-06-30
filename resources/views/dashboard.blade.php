@@ -12,6 +12,12 @@
                     <p class="mb-1">Welcome, <strong>{{ auth()->user()->name ?? 'User' }}</strong>.</p>
                     <p class="text-muted mb-4">{{ auth()->user()->email }}</p>
 
+                    @role('admin')
+                        <div class="mb-4">
+                            <a href="{{ route('teachers.index') }}" class="btn btn-primary">Manage Teachers</a>
+                        </div>
+                    @endrole
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger">Logout</button>
